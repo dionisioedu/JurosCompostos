@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculadora de Juros Compostos (com aportes) — rápida e minimalista</title>
+  <meta name="description" content="Simule juros compostos com aportes mensais. Veja montante final, total investido e juros ganhos — com evolução mês a mês. Simples, rápida e grátis." />
+  <meta name="theme-color" content="#0b0c10" />
+
+  <!-- Open Graph básico -->
+  <meta property="og:title" content="Calculadora de Juros Compostos — rápida e minimalista" />
+  <meta property="og:description" content="Simule em segundos (com aportes). Ferramenta grátis para usar no dia a dia." />
+  <meta property="og:type" content="website" />
+
+  <link rel="stylesheet" href="./assets/style.css" />
+</head>
+
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="brand">
+        <div class="dot" aria-hidden="true"></div>
+        <span>Juros Compostos</span>
+      </div>
+      <nav class="nav">
+        <a href="#calc">Simular</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Simule em segundos. Decida melhor em minutos.</h1>
+      <p class="sub">
+        Uma calculadora minimalista de <strong>juros compostos</strong> com <strong>aportes mensais</strong>.
+        Sem cadastro, sem enrolação. Feita para virar parte do seu dia.
+      </p>
+
+      <!-- Placeholder AdSense (topo) -->
+      <div class="ad-slot" role="complementary" aria-label="Publicidade">
+        <div class="ad-note">Espaço para AdSense (topo)</div>
+      </div>
+
+      <div class="pill-row" aria-label="Destaques">
+        <span class="pill">Grátis</span>
+        <span class="pill">Rápida</span>
+        <span class="pill">Sem cadastro</span>
+        <span class="pill">Mobile-first</span>
+      </div>
+    </section>
+
+    <section id="calc" class="grid">
+      <section class="card">
+        <div class="card-head">
+          <h2>Simulação</h2>
+          <p class="muted">Preencha e veja o resultado instantaneamente.</p>
+        </div>
+
+        <form id="form" class="form" autocomplete="off">
+          <div class="row">
+            <div class="field">
+              <label for="principal">Valor inicial</label>
+              <input id="principal" name="principal" inputmode="decimal" placeholder="Ex.: 1.000,00" />
+              <div class="hint">Quanto você começa hoje.</div>
+            </div>
+
+            <div class="field">
+              <label for="monthly">Aporte mensal</label>
+              <input id="monthly" name="monthly" inputmode="decimal" placeholder="Ex.: 200,00" />
+              <div class="hint">Opcional, mas muda tudo.</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="rate">Taxa</label>
+              <div class="stack">
+                <input id="rate" name="rate" inputmode="decimal" placeholder="Ex.: 1,0" />
+                <select id="rateUnit" name="rateUnit" aria-label="Unidade da taxa">
+                  <option value="month">% ao mês</option>
+                  <option value="year">% ao ano</option>
+                </select>
+              </div>
+              <div class="hint">Use ponto ou vírgula. Ex.: 0,8 / 12</div>
+            </div>
+
+            <div class="field">
+              <label for="time">Período</label>
+              <div class="stack">
+                <input id="time" name="time" inputmode="numeric" placeholder="Ex.: 24" />
+                <select id="timeUnit" name="timeUnit" aria-label="Unidade do período">
+                  <option value="month">meses</option>
+                  <option value="year">anos</option>
+                </select>
+              </div>
+              <div class="hint">Tempo é o motor do composto.</div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="btnCopy" type="button" class="ghost" title="Copiar resumo">
+              Copiar resumo
+            </button>
+            <button id="btnReset" type="button" class="ghost" title="Limpar campos">
+              Limpar
+            </button>
+          </div>
+
+          <div class="micro" id="micro">
+            Dica: aumente o tempo em 12 meses e observe o salto — é o “efeito bola de neve”.
+          </div>
+
+          <p class="small muted">
+            *Resultados aproximados. Esta ferramenta é educativa e não é recomendação financeira.
+          </p>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>Resultado</h2>
+          <p class="muted">O que realmente importa: total, investido e juros.</p>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="kpi-label">Montante final</div>
+            <div class="kpi-value" id="kpiFinal">—</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Total investido</div>
+            <div class="kpi-value" id="kpiInvested">—</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Juros ganhos</div>
+            <div class="kpi-value" id="kpiInterest">—</div>
+          </div>
+        </div>
+
+        <div class="bar" aria-label="Distribuição entre investido e juros">
+          <div class="bar-label">
+            <span>Investido</span>
+            <span>Juros</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-invested" id="barInvested" style="width:50%"></div>
+            <div class="bar-interest" id="barInterest" style="width:50%"></div>
+          </div>
+          <div class="bar-foot muted" id="barFoot">—</div>
+        </div>
+
+        <details class="details" id="details">
+          <summary>
+            Ver evolução mês a mês
+            <span class="muted">(tabela)</span>
+          </summary>
+
+          <div class="table-wrap">
+            <table class="table" aria-label="Evolução mês a mês">
+              <thead>
+                <tr>
+                  <th>Mês</th>
+                  <th>Saldo</th>
+                  <th>Investido</th>
+                  <th>Juros</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </details>
+
+        <!-- Placeholder AdSense (meio) -->
+        <div class="ad-slot" role="complementary" aria-label="Publicidade">
+          <div class="ad-note">Espaço para AdSense (meio)</div>
+        </div>
+
+        <div class="share">
+          <div class="share-head">
+            <strong>Use como ritual rápido</strong>
+            <span class="muted">1 minuto por dia.</span>
+          </div>
+          <p class="muted small">
+            Simule “se eu investir X todo mês por Y anos” e tome decisões com clareza.
+            Ferramentas simples viram hábitos porque reduzem atrito.
+          </p>
+        </div>
+      </section>
+    </section>
+
+    <section class="seo">
+      <h2>O que é juros compostos?</h2>
+      <p class="muted">
+        Juros compostos são os “juros sobre juros”. Em vez de crescer em linha reta, seu dinheiro tende a crescer em curva
+        porque os rendimentos passam a render também. Com aportes mensais, o efeito acelera.
+      </p>
+    </section>
+
+    <section id="faq" class="faq">
+      <h2>FAQ</h2>
+      <details class="details">
+        <summary>Qual a diferença entre taxa ao mês e ao ano?</summary>
+        <p class="muted">
+          A taxa ao ano é convertida para uma taxa equivalente ao mês para calcular mês a mês.
+          Assim, a simulação fica consistente com o período em meses.
+        </p>
+      </details>
+      <details class="details">
+        <summary>Por que o tempo faz tanta diferença?</summary>
+        <p class="muted">
+          Porque o crescimento composto acelera com o tempo. Pequenas diferenças no prazo podem gerar grandes diferenças no final.
+        </p>
+      </details>
+      <details class="details">
+        <summary>Posso usar para investimentos reais?</summary>
+        <p class="muted">
+          Use como estimativa educativa. Produtos reais têm impostos, taxas, variações e riscos que não estão modelados aqui.
+        </p>
+      </details>
+    </section>
+
+    <footer class="footer">
+      <div class="muted small">
+        Use este simulador sempre que pensar em investir. Feito com ♥ por <a href="https://x.com/dionisiodev" target="_blank" rel="noopener">Dionisio</a>.
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="./assets/app.js"></script>
+</body>
+</html>
